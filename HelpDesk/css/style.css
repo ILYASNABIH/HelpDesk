@@ -1,0 +1,112 @@
+body{
+    margin: 0px;
+    background-color: #f4f4f8;
+}
+.img-HD {
+    width: 224px;
+    height: auto;
+}
+header{
+    display: flex;
+    justify-content: space-between;
+    
+    background-color: white;
+    max-width: 100%;
+}
+
+header img{
+	margin-left: 64px;
+}
+header nav {
+	margin-right: 128px;
+	margin-top: 12px;
+}
+
+.liens{
+    display: flex;
+    gap: 5px;
+    margin-top: 11px;
+    text-decoration: none;
+    list-style: none;
+    color: #8A95A4;
+}
+.liens :hover{
+    color: black;
+
+}
+.demande-txt{
+	margin-top: 32px;
+    margin-left: 96px;
+
+}
+.demande-txt p{
+    color: #8792A1;
+}
+.demande-admit {
+  margin-top: 32px;
+  margin-left: 96px;
+	max-width: 1200px;
+	background-color: white;
+	border-radius: 12px;
+	padding: 12px 24px 12px 24px;
+}
+.reclam {
+	display: grid;
+	grid-template-columns: 2fr 1fr 1fr;
+	gap: 20px;
+}
+
+.input4 {
+  grid-column: 1 / 4;
+  margin-top: 10px;
+}
+
+
+label {
+  color: #334155;
+  margin-bottom: 8px;
+}
+
+
+input, select, textarea {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  color: #334155;
+  background-color: #ffffff;
+  outline: none;
+  box-sizing: border-box;
+}
+
+input::placeholder, textarea::placeholder {
+  color: #94a3b8;
+}
+
+
+
+textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+
+.botona {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 24px;
+}
+
+
+.ajt-btn {
+  background-color: #242e3e;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 24px;
+  cursor: pointer;
+}
+
+.ajt-btn:hover {
+  background-color: #1a2332;
+}
