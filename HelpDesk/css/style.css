@@ -1,0 +1,45 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: #f8fafc;
+    color: #1e293b;
+    padding-bottom: 40px;
+}
+
+.main-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #ffffff;
+    padding: 16px 48px;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.logo-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.hede-logo {
+    max-width: 120px;
+}
+.nav-bar {
+    display: flex;
+    gap: 8px;
+    font-size: 0.9rem;
+}
+.breadcrumb-item {
+    color: #94a3b8;
+}
+
+.breadcrumb-item.active {
+    color: #64748b;
+}
+
+.breadcrumb-separator {
+    color: #cbd5e1;
+}
