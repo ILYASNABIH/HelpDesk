@@ -1,0 +1,148 @@
+// Étape 3: Données initiales
+let demandes = [
+    {
+        id: "HD-001",
+        numericId: 1,
+        titre: "Connexion Wi-Fi instable",
+        description: "Le réseau se déconnecte régulièrement.",
+        categorie: "Réseau",
+        priorite: "Haute"
+    },
+    {
+        id: "HD-002",
+        numericId: 2,
+        titre: "Installation d'un logiciel",
+        description: "Installer un logiciel sur le poste.",
+        categorie: "Logiciel",
+        priorite: "Normale"
+    },
+    
+];
+
+let prochainId = 4;
+
+// Sélection des éléments HTML
+const cartesConteneur = document.getElementById("cartes-conteneur");
+const ticketCompteur = document.getElementById("ticket-compteur");
+const ticketForm = document.getElementById("ticket-form");
+const formMessage = document.getElementById("form-message");
+
+// Fonction pour déterminer la classe CSS de priorité
+function getPriorityClass(priorite) {
+    switch (priorite.toLowerCase()) {
+        case "haute": return "badge-priorite-haute";
+        case "normale": return "badge-priorite-normale";
+        case "basse": return "badge-priorite-basse";
+        default: return "";
+    }
+}
+
+// Fonction pour obtenir l'icône de la catégorie
+function getCategoryIcon(categorie) {
+    switch (categorie.toLowerCase()) {
+        case "réseau": return "⚡";
+        case "logiciel": return "🔲";
+        case "matériel": return "⌨️";
+        default: return "📌";
+    }
+}
+
+// Étape 4: Afficher les cartes dans le conteneur avec .append()
+function afficherDemandes() {
+    // Vider le conteneur
+    cartesConteneur.textContent = "";
+
+    // Mettre à jour le compteur
+    ticketCompteur.textContent = `${demandes.length} demande${demandes.length > 1 ? "s" : ""}`;
+
+    // Cas où la liste est vide
+    if (demandes.length === 0) {
+        const emptyDiv = document.createElement("div");
+        emptyDiv.className = "empty-state";
+        emptyDiv.textContent = "Aucune demande d'assistance pour le moment.";
+        cartesConteneur.append(emptyDiv);
+        return;
+    }
+
+    // Parcourir le tableau de demandes
+    demandes.forEach(demande => {
+        const card = document.createElement("article");
+        card.className = "ticket-card";
+
+        card.innerHTML = `
+            <div>
+                <div class="card-top">
+                    <div class="card-icon">${getCategoryIcon(demande.categorie)}</div>
+                    <span class="card-id">${demande.id}</span>
+                </div>
+                <h3 class="card-title"></h3>
+                <p class="card-desc"></p>
+                <div class="card-badges">
+                    <span class="badge badge-cat">${demande.categorie}</span>
+                    <span class="badge ${getPriorityClass(demande.priorite)}">${demande.priorite}</span>
+                </div>
+            </div>
+            <div class="card-footer">
+                <button type="button" class="btn-delete" data-id="${demande.numericId}">🗑 Supprimer</button>
+            </div>
+        `;
+
+        // Sécuriser l'affichage du texte (anti-XSS)
+        card.querySelector(".card-title").textContent = demande.titre;
+        card.querySelector(".card-desc").textContent = demande.description;
+        
+
+        // Utilisation de .append() au lieu de .appendChild()
+        cartesConteneur.append(card);
+    });
+}
+
+// Étape 5: Ajouter une demande valide
+ticketForm.addEventListener("submit", function (event) {
+    event.preventDefault();
+
+    const titreInput = document.getElementById("titre").value.trim();
+    const categorieInput = document.getElementById("categorie").value;
+    const prioriteInput = document.getElementById("priorite").value;
+    const descriptionInput = document.getElementById("description").value.trim();
+
+    // Réinitialiser le message
+    formMessage.className = "form-message";
+    formMessage.textContent = "";
+
+    // Validation
+    if (!titreInput || !categorieInput || !prioriteInput || !descriptionInput) {
+        formMessage.textContent = "Veuillez remplir tous les champs obligatoires (*).";
+        formMessage.classList.add("error");
+        return;
+    }
+
+    // Création de l'objet
+    const nouvelleDemande = {
+        id: `HD-${String(prochainId).padStart(3, "0")}`,
+        numericId: prochainId,
+        titre: titreInput,
+        description: descriptionInput,
+        categorie: categorieInput,
+        priorite: prioriteInput
+    };
+
+    prochainId++;
+    demandes.push(nouvelleDemande);
+
+    // Actualiser l'affichage et réinitialiser le formulaire
+    afficherDemandes();
+    ticketForm.reset();
+
+    // Message de confirmation
+    formMessage.textContent = "La demande a été ajoutée avec succès !";
+    formMessage.classList.add("success");
+
+    setTimeout(() => {
+        formMessage.className = "form-message";
+    }, 3000);
+});
+
+
+// Initialisation au chargement de la page
+document.addEventListener("DOMContentLoaded", afficherDemandes);
