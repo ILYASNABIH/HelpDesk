@@ -16,7 +16,14 @@ let demandes = [
         categorie: "Logiciel",
         priorite: "Normale"
     },
-    
+    {
+        id: "HD-003",
+        numericId: 3,
+        titre: "Clavier défectueux",
+        description: "Certaines touches ne fonctionnent plus.",
+        categorie: "Matériel",
+        priorite: "Basse"
+    }
 ];
 
 let prochainId = 4;
@@ -90,7 +97,10 @@ function afficherDemandes() {
         // Sécuriser l'affichage du texte (anti-XSS)
         card.querySelector(".card-title").textContent = demande.titre;
         card.querySelector(".card-desc").textContent = demande.description;
-        
+
+        // Étape 6: Événement de suppression sur le bouton
+        const btnDelete = card.querySelector(".btn-delete");
+        btnDelete.addEventListener("click", () => supprimerDemande(demande.numericId));
 
         // Utilisation de .append() au lieu de .appendChild()
         cartesConteneur.append(card);
@@ -143,6 +153,16 @@ ticketForm.addEventListener("submit", function (event) {
     }, 3000);
 });
 
+// Étape 6: Supprimer une demande
+function supprimerDemande(numericId) {
+    const confirmation = window.confirm("Êtes-vous sûr de vouloir supprimer cette demande ?");
+    if (!confirmation) return;
 
+    // Filtrer le tableau
+    demandes = demandes.filter(d => d.numericId !== numericId);
+
+    // Mettre à jour l'affichage
+    afficherDemandes();
+}
 // Initialisation au chargement de la page
 document.addEventListener("DOMContentLoaded", afficherDemandes);
