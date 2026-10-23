@@ -331,3 +331,44 @@ textarea {
         padding: 16px;
     }
 }
+.card-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 16px;
+    padding-top: 12px;
+    border-top: 1px solid #f1f5f9;
+}
+
+
+.btn-edit {
+    background: none;
+    border: none;
+    color: #475569;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.btn-edit:hover {
+    color: #1e293b;
+    text-decoration: underline;
+}
+
+.btn-delete {
+    background: none;
+    border: none;
+    color: #ef4444;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.btn-delete:hover {
+    text-decoration: underline;
+}

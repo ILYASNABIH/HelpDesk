@@ -27,12 +27,15 @@ let demandes = [
 ];
 
 let prochainId = 4;
+// Variable pour savoir si on est en train de modifier une demande (contient l'ID ou null)
+let ticketEnCoursEditionId = null; 
 
 // Sélection des éléments HTML
 const cartesConteneur = document.getElementById("cartes-conteneur");
 const ticketCompteur = document.getElementById("ticket-compteur");
 const ticketForm = document.getElementById("ticket-form");
 const formMessage = document.getElementById("form-message");
+const submitBtn = ticketForm.querySelector("button[type='submit']");
 
 // Fonction pour déterminer la classe CSS de priorité
 function getPriorityClass(priorite) {
@@ -76,6 +79,7 @@ function afficherDemandes() {
         const card = document.createElement("article");
         card.className = "ticket-card";
 
+        // Inscription du bouton "Modifier" dans le footer
         card.innerHTML = `
             <div>
                 <div class="card-top">
@@ -90,6 +94,7 @@ function afficherDemandes() {
                 </div>
             </div>
             <div class="card-footer">
+                <button type="button" class="btn-edit" data-id="${demande.numericId}">✏️ Modifier</button>
                 <button type="button" class="btn-delete" data-id="${demande.numericId}">🗑 Supprimer</button>
             </div>
         `;
@@ -97,6 +102,10 @@ function afficherDemandes() {
         // Sécuriser l'affichage du texte (anti-XSS)
         card.querySelector(".card-title").textContent = demande.titre;
         card.querySelector(".card-desc").textContent = demande.description;
+
+        // Événement pour charger la demande dans le formulaire lors du clic sur Modifier
+        const btnEdit = card.querySelector(".btn-edit");
+        btnEdit.addEventListener("click", () => chargerDemandeDansFormulaire(demande.numericId));
 
         // Étape 6: Événement de suppression sur le bouton
         const btnDelete = card.querySelector(".btn-delete");
@@ -107,7 +116,26 @@ function afficherDemandes() {
     });
 }
 
-// Étape 5: Ajouter une demande valide
+// Fonction pour charger la demande sélectionnée dans le formulaire
+function chargerDemandeDansFormulaire(numericId) {
+    const ticket = demandes.find(d => d.numericId === numericId);
+    if (!ticket) return;
+
+    // Remplir les champs
+    document.getElementById("titre").value = ticket.titre;
+    document.getElementById("categorie").value = ticket.categorie;
+    document.getElementById("priorite").value = ticket.priorite;
+    document.getElementById("description").value = ticket.description;
+
+    // Activer le mode édition
+    ticketEnCoursEditionId = numericId;
+    submitBtn.textContent = "✏️ Enregistrer les modifications";
+
+    // Remonter doucement vers le formulaire
+    ticketForm.scrollIntoView({ behavior: "smooth" });
+}
+
+// Étape 5: Ajouter ou Modifier une demande
 ticketForm.addEventListener("submit", function (event) {
     event.preventDefault();
 
@@ -127,25 +155,40 @@ ticketForm.addEventListener("submit", function (event) {
         return;
     }
 
-    // Création de l'objet
-    const nouvelleDemande = {
-        id: `HD-${String(prochainId).padStart(3, "0")}`,
-        numericId: prochainId,
-        titre: titreInput,
-        description: descriptionInput,
-        categorie: categorieInput,
-        priorite: prioriteInput
-    };
+    if (ticketEnCoursEditionId !== null) {
+        // --- MODE MODIFICATION ---
+        const index = demandes.findIndex(d => d.numericId === ticketEnCoursEditionId);
+        if (index !== -1) {
+            demandes[index].titre = titreInput;
+            demandes[index].categorie = categorieInput;
+            demandes[index].priorite = prioriteInput;
+            demandes[index].description = descriptionInput;
+        }
 
-    prochainId++;
-    demandes.push(nouvelleDemande);
+        formMessage.textContent = "La demande a été modifiée avec succès !";
+        ticketEnCoursEditionId = null;
+        submitBtn.textContent = "＋ Ajouter la demande";
+    } else {
+        // --- MODE AJOUT ---
+        const nouvelleDemande = {
+            id: `HD-${String(prochainId).padStart(3, "0")}`,
+            numericId: prochainId,
+            titre: titreInput,
+            description: descriptionInput,
+            categorie: categorieInput,
+            priorite: prioriteInput
+        };
+
+        prochainId++;
+        demandes.push(nouvelleDemande);
+        formMessage.textContent = "La demande a été ajoutée avec succès !";
+    }
 
     // Actualiser l'affichage et réinitialiser le formulaire
     afficherDemandes();
     ticketForm.reset();
 
     // Message de confirmation
-    formMessage.textContent = "La demande a été ajoutée avec succès !";
     formMessage.classList.add("success");
 
     setTimeout(() => {
@@ -158,11 +201,19 @@ function supprimerDemande(numericId) {
     const confirmation = window.confirm("Êtes-vous sûr de vouloir supprimer cette demande ?");
     if (!confirmation) return;
 
+    // Si la demande en cours de suppression était affichée dans le formulaire, on réinitialise le formulaire
+    if (ticketEnCoursEditionId === numericId) {
+        ticketEnCoursEditionId = null;
+        submitBtn.textContent = "＋ Ajouter la demande";
+        ticketForm.reset();
+    }
+
     // Filtrer le tableau
     demandes = demandes.filter(d => d.numericId !== numericId);
 
     // Mettre à jour l'affichage
     afficherDemandes();
 }
+
 // Initialisation au chargement de la page
 document.addEventListener("DOMContentLoaded", afficherDemandes);
